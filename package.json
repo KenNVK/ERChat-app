@@ -24,11 +24,12 @@
   },
   "main": "main.js",
   "scripts": {
-    "start": "react-scripts start",
+    "react-start": "BROWSER=none react-scripts start",
+    "electron-start": "ELECTRON_DISABLE_SECURITY_WARNINGS=1 electron .",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron-react": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\""
+    "start": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && npm run electron-start\""
   },
   "eslintConfig": {
     "extends": [

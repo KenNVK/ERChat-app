@@ -1,8 +1,11 @@
-import logo from "./logo.svg";
 import "./App.css";
 
 function App() {
-  return <h1>チャットアプリ</h1>;
+  return (
+    <div className="App">
+      <h1>チャットアプリ</h1>
+    </div>
+  );
 }
 
 export default App;
