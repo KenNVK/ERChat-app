@@ -5,7 +5,9 @@ export default function Login() {
   return (
     <>
       <Row>
-        <Col></Col>
+        <Col span={8}>Login with Google</Col>
+        <Col span={8}>Login with Facebook</Col>
+        <Button type="primary">Primary Button</Button>
       </Row>
     </>
   );
