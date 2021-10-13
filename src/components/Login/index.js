@@ -3,10 +3,10 @@ import { Row, Col } from "antd";
 
 export default function Login() {
   return (
-    <div>
+    <>
       <Row>
-        <Col span></Col>
+        <Col></Col>
       </Row>
-    </div>
+    </>
   );
 }
