@@ -6,8 +6,10 @@ const isDev = require("electron-is-dev");
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    height: 554,
+    width: 763,
+    minHeight: 435,
+    minWidth: 630,
     webPreferences: {
       nodeIntegration: true,
     },
@@ -19,7 +21,7 @@ function createWindow() {
   );
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished

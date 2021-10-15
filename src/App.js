@@ -1,5 +1,6 @@
 import "./App.css";
-import Login from "./components/Login";
+import "antd/dist/antd.css";
+import Login from "./components/Login/index";
 
 function App() {
   return (
