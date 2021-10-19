@@ -1,18 +1,31 @@
 import React from "react";
 import "antd/dist/antd.css";
 import { Button, Row, Col, Typography } from "antd";
-import "./login.css";
-import bgImage from "../../images/login-background.jpg";
+import bgImage from "../../images/Background.png";
 import { GoogleCircleFilled, FacebookFilled } from "@ant-design/icons";
+import firebase, { auth } from "../../firebase/config";
+import { useHistory } from "react-router-dom";
 
 const { Title } = Typography;
+const fbProvider = new firebase.auth.FacebookAuthProvider();
 
 export default class Login extends React.Component {
-  state = {
-    loadings: [],
+  state = { loadings: [] };
+
+  handleLogin = () => {
+    auth.signInWithPopup(fbProvider);
+
+    auth.onAuthStateChanged(user => {
+      const history = useHistory();
+
+      if (user) {
+        history.push("/");
+        return;
+      }
+    });
   };
 
-  enterLoading = (index) => {
+  enterLoading = index => {
     this.setState(({ loadings }) => {
       const newLoadings = [...loadings];
       newLoadings[index] = true;
@@ -37,6 +50,15 @@ export default class Login extends React.Component {
       <>
         <Row>
           <Col
+            span={14}
+            style={{
+              background: `url("${bgImage}") no-repeat center center fixed`,
+              backgroundSize: "cover",
+              height: "100vh",
+              width: "100%",
+            }}
+          ></Col>
+          <Col
             span={10}
             style={{
               display: "flex",
@@ -46,9 +68,7 @@ export default class Login extends React.Component {
               padding: "120px 0 200px",
             }}
           >
-            <Title style={{ marginBottom: "50px", color: "#333" }}>
-              Sign in
-            </Title>
+            <Title style={{ marginBottom: "50px", color: "#333" }}>Sign in</Title>
             <Button
               style={{
                 minWidth: "240px",
@@ -84,8 +104,7 @@ export default class Login extends React.Component {
                 minWidth: "240px",
                 width: "65%",
                 marginTop: "12px",
-                background:
-                  "linear-gradient(to right, #1672c7, rgb(64 106 159 / 63%))",
+                background: "linear-gradient(to right, #1672c7, rgb(64 106 159 / 63%))",
                 border: "none",
               }}
               size="large"
@@ -94,22 +113,13 @@ export default class Login extends React.Component {
               onClick={() => this.enterLoading(1)}
             >
               <div style={{ display: "flex", alignItems: "center", flex: "1" }}>
-                <FacebookFilled
-                  style={{ fontSize: "1.6rem", margin: "0 .8rem" }}
-                />
-                <span style={{ flex: "1" }}>Facebookでログイン</span>
+                <FacebookFilled style={{ fontSize: "1.6rem", margin: "0 .8rem" }} />
+                <span style={{ flex: "1" }} onClick={this.handleLogin}>
+                  Facebookでログイン
+                </span>
               </div>
             </Button>
           </Col>
-          <Col
-            span={14}
-            style={{
-              background: `url("${bgImage}") no-repeat center center fixed`,
-              backgroundSize: "cover",
-              height: "100vh",
-              width: "100%",
-            }}
-          ></Col>
         </Row>
       </>
     );
