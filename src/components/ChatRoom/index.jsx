@@ -1,21 +1,21 @@
-import { Button } from "antd";
+import { Typography, Col, Row } from "antd";
 import React from "react";
-import { auth } from "../../firebase/config";
-import { useHistory } from "react-router-dom";
-
+import UserInfor from "./userInfor";
+import RoomList from "./roomList";
+const { Title } = Typography;
 export default function ChatRoom() {
-  const history = useHistory();
-  const handleLogout = () => {
-    auth.signOut();
-    history.push("/login");
-  };
-
   return (
     <div>
-      This is chat room
-      <Button danger onClick={handleLogout}>
-        <span>Logout</span>
-      </Button>
+      <Row>
+        <Col span={8} style={{ height: "100vh" }}>
+          <Title level={3}>This is room list</Title>
+          <UserInfor />
+          <RoomList />
+        </Col>
+        <Col span={16}>
+          <Title level={3}>This is Room'name</Title>
+        </Col>
+      </Row>
     </div>
   );
 }

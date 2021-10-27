@@ -14,7 +14,9 @@ export default function Login() {
 
   const handleLogin = async provider => {
     try {
-      await auth.signInWithPopup(provider);
+      const data = await auth.signInWithPopup(provider);
+      if (data.additionalUserInfo?.isNewUser) {
+      }
     } catch (error) {
       console.log(error);
       setLoadings([]);
