@@ -1,6 +1,9 @@
 import React from "react";
 import { UserAddOutlined } from "@ant-design/icons";
-import { Tooltip, Avatar, Button, Input, Form } from "antd";
+import { Tooltip, Avatar, Button, Input, Form, Alert } from "antd";
+import { AppContext } from "../../Context/AppProvider";
+import { AuthContext } from "../../Context/AuthProvider";
+import { addDocument } from "../../firebase/service";
 import styled from "styled-components";
 import Message from "./Message";
 
@@ -65,51 +68,62 @@ const MessageListStyled = styled.div`
 `;
 
 export default function ChatWindow() {
-  return (
-    <WrapperStyled>
-      <HeaderStyled>
-        <div className="header__info">
-          <p className="title">Room1 </p>
-          <span className="header__description">This is room1</span>
-        </div>
-        <ButtonGroupStyled>
-          <Button icon={<UserAddOutlined />} type="text">
-            招待
-          </Button>
-          <Avatar.Group size="small" maxCount={2}>
-            <Tooltip>
-              <Avatar title="A"></Avatar>
-            </Tooltip>
-            <Tooltip>
-              <Avatar title="B"></Avatar>
-            </Tooltip>
-            <Tooltip>
-              <Avatar title="C"></Avatar>
-            </Tooltip>
-            <Tooltip>
-              <Avatar title="D"></Avatar>
-            </Tooltip>
-          </Avatar.Group>
-        </ButtonGroupStyled>
-      </HeaderStyled>
-      <ContentStyled>
-        <MessageListStyled>
-          <Message text="Test" photoURL={null} displayName="Khoa" createdAt={2021}></Message>
-          <Message text="Test1" photoURL={null} displayName="Khoa" createdAt={2021}></Message>
-          <Message text="Test12" photoURL={null} displayName="Khoa" createdAt={2021}></Message>
-          <Message text="Test123" photoURL={null} displayName="Khoa" createdAt={2021}></Message>
-          <Message text="Test" photoURL={null} displayName="Khoa" createdAt={2021}></Message>
-          <Message text="Test1" photoURL={null} displayName="Khoa" createdAt={2021}></Message>
-          <Message text="Test12" photoURL={null} displayName="Khoa" createdAt={2021}></Message>
-          <Message text="Test123" photoURL={null} displayName="Khoa" createdAt={2021}></Message>
-        </MessageListStyled>
+  const { selectedRoom, selectedRoomMembers, selectedRoomId, messages } = React.useContext(AppContext);
+  const {
+    user: { uid, photoURL, displayName },
+  } = React.useContext(AuthContext);
+  const [form] = Form.useForm();
+  const subMess = value => {
+    addDocument("messages", { ...form.getFieldsValue(), userId: uid, displayName, photoURL, roomId: selectedRoomId });
+    form.resetFields();
+  };
+  if (selectedRoomId !== "") {
+    return (
+      <WrapperStyled>
+        <HeaderStyled>
+          <div className="header__info">
+            <p className="title">{selectedRoom.name}</p>
+            <span className="header__description">{selectedRoom.description}</span>
+          </div>
+          <ButtonGroupStyled>
+            <Button icon={<UserAddOutlined />} type="text">
+              招待
+            </Button>
+            <Avatar.Group size="small" maxCount={2}>
+              {selectedRoomMembers.map(member => (
+                <Tooltip key={member?.id} placement="bottomLeft" title={member?.displayName}>
+                  <Avatar src={member?.photoURL}>{member.displayName?.charAt(0)}</Avatar>
+                </Tooltip>
+              ))}
+            </Avatar.Group>
+          </ButtonGroupStyled>
+        </HeaderStyled>
+        <ContentStyled>
+          <MessageListStyled>
+            {messages.map(mess => (
+              <Message mess={mess}></Message>
+            ))}
+          </MessageListStyled>
 
-        <FormStyled>
-          <Form.Item>
-            <Input borderd={false} autoComplete="off" placeholder="メッセージを入力" />
-          </Form.Item>
-        </FormStyled>
-      </ContentStyled>
-    </WrapperStyled>
-  );
+          <FormStyled form={form} onFinish={subMess}>
+            <Form.Item name="mess">
+              <Input bordered={false} autoComplete="off" placeholder="メッセージを入力" />
+            </Form.Item>
+          </FormStyled>
+        </ContentStyled>
+      </WrapperStyled>
+    );
+  } else {
+    return (
+      <>
+        <Alert
+          type="info"
+          message="注意"
+          description="いずれのルームチャットが選択されていません！"
+          showIcon
+          closable
+        />
+      </>
+    );
+  }
 }

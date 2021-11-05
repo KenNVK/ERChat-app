@@ -4,6 +4,8 @@ import Login from "./components/Login";
 import ChatRoom from "./components/ChatRoom";
 import { Route, Switch, BrowserRouter } from "react-router-dom";
 import AuthProvider from "./Context/AuthProvider";
+import AppProvider from "./Context/AppProvider";
+import AddRoom from "./components/Modals/AddRoom";
 import { useEffect } from "react";
 
 function App() {
@@ -14,12 +16,15 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Switch>
+        <AppProvider>
           <Switch>
-            <Route component={Login} path="/login" />
-            <Route component={ChatRoom} path="/" />
+            <Switch>
+              <Route component={Login} path="/login" />
+              <Route component={ChatRoom} path="/" />
+            </Switch>
           </Switch>
-        </Switch>
+          <AddRoom />
+        </AppProvider>
       </AuthProvider>
     </BrowserRouter>
   );

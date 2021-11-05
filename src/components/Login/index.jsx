@@ -4,6 +4,8 @@ import { Button, Row, Col, Typography } from "antd";
 import bgImage from "../../images/Background.png";
 import { GoogleCircleFilled, FacebookFilled } from "@ant-design/icons";
 import firebase, { auth } from "../../firebase/config";
+import { addDocument } from "../../firebase/service";
+import { AppContext } from "../../Context/AppProvider";
 
 const { Title } = Typography;
 const fbProvider = new firebase.auth.FacebookAuthProvider();
@@ -11,11 +13,19 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 export default function Login() {
   const [loadings, setLoadings] = useState([]);
-
+  const { setSelectedRoomId } = React.useContext(AppContext);
   const handleLogin = async provider => {
     try {
       const data = await auth.signInWithPopup(provider);
+      setSelectedRoomId("");
       if (data.additionalUserInfo?.isNewUser) {
+        addDocument("users", {
+          displayName: data.user.displayName,
+          email: data.user.email,
+          uid: data.user.uid,
+          photoURL: data.user.photoURL,
+          providerId: data.additionalUserInfo.providerId,
+        });
       }
     } catch (error) {
       console.log(error);

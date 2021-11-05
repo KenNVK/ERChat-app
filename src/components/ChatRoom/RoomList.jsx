@@ -1,4 +1,5 @@
 import React from "react";
+import { AppContext } from "../../Context/AppProvider";
 import { Collapse, Typography, Button } from "antd";
 import styled from "styled-components";
 import { PlusSquareOutlined } from "@ant-design/icons";
@@ -29,15 +30,20 @@ const LinkStyled = styled(Typography.Link)`
 `;
 
 export default function RoomList() {
+  const { rooms, setIsAddRoomVisible, setSelectedRoomId } = React.useContext(AppContext);
+  const handleAddRoom = () => {
+    setIsAddRoomVisible(true);
+  };
   return (
     <Collapse ghost defaultCollapse={["1"]}>
       <PanelStyled header="リストルーム" key="1">
-        <LinkStyled>Room 1</LinkStyled>
-        <LinkStyled>Room 2</LinkStyled>
-        <LinkStyled>Room 3</LinkStyled>
-        <LinkStyled>Room 4</LinkStyled>
-        <LinkStyled>Room 5</LinkStyled>
-        <Button type="text" icon={<PlusSquareOutlined />} className="btn__addroom">
+        {rooms.map(room => (
+          <LinkStyled key={room.id} onClick={() => setSelectedRoomId(room.id)}>
+            {room.name}
+          </LinkStyled>
+        ))}
+        <Button type="text" onClick={handleAddRoom} icon={<PlusSquareOutlined />} className="btn__addroom">
+          {" "}
           ルーム追加
         </Button>
       </PanelStyled>

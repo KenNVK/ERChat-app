@@ -1,9 +1,10 @@
 import React from "react";
 import { auth } from "../../firebase/config";
-import { Button, Avatar, Typography } from "antd";
+import { Button, Avatar, Typography, Tooltip } from "antd";
 import { useHistory } from "react-router";
 import styled from "styled-components";
-
+import { LogoutOutlined } from "@ant-design/icons";
+import { AuthContext } from "../../Context/AuthProvider";
 const WrapperStyled = styled.div`
   display: flex;
   justify-content: space-between;
@@ -22,15 +23,22 @@ export default function UserInfo() {
     auth.signOut();
     history.push("/login");
   };
+  const {
+    user: { displayName, photoURL },
+  } = React.useContext(AuthContext);
   return (
     <WrapperStyled>
       <div>
-        <Avatar>K</Avatar>
-        <Typography.Text className="username">NVKHOA</Typography.Text>
+        <Avatar src={photoURL ? photoURL : ""}>{displayName?.charAt(0)}</Avatar>
+        <Typography.Text className="username">{displayName ? displayName : ""}</Typography.Text>
       </div>
-      <Button ghost danger onClick={handleLogout}>
-        <span>ログアウト</span>
-      </Button>
+      <Tooltip placement="leftTop" title="ログアウト">
+        <Button shape="circle" ghost danger onClick={handleLogout}>
+          <span>
+            <LogoutOutlined />
+          </span>
+        </Button>
+      </Tooltip>
     </WrapperStyled>
   );
 }
