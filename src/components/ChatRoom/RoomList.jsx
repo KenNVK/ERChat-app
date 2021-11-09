@@ -43,7 +43,6 @@ export default function RoomList() {
           </LinkStyled>
         ))}
         <Button type="text" onClick={handleAddRoom} icon={<PlusSquareOutlined />} className="btn__addroom">
-          {" "}
           ルーム追加
         </Button>
       </PanelStyled>

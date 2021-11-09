@@ -32,7 +32,7 @@ function formatDate(seconds) {
   }
   return formattedDate;
 }
-export default function Message({ text, displayName, createdAt, photoURL, userId }) {
+export default function Message({ text, displayName, created, photoURL, userId }) {
   const {
     user: { uid },
   } = React.useContext(AuthContext);
@@ -40,12 +40,11 @@ export default function Message({ text, displayName, createdAt, photoURL, userId
     <WrapperStyled>
       {userId === uid ? (
         <div style={{ overflow: "auto" }}>
-          <Tooltip title={formatDate(1636333650)} placement="topLeft">
+          <Tooltip title={formatDate(created?.seconds)} placement="topLeft">
             <Typography.Text
               style={{ float: "right", background: "#71e267", borderRadius: "10px" }}
               className="content"
             >
-              <Typography.Text className="date">{createdAt}</Typography.Text>
               {text}
             </Typography.Text>
           </Tooltip>
@@ -55,7 +54,7 @@ export default function Message({ text, displayName, createdAt, photoURL, userId
           <div>
             <Avatar src={photoURL}>{displayName?.charAt(0)}</Avatar>
             <Typography.Text className="author">{displayName}</Typography.Text>
-            <Typography.Text className="date">{new Date(createdAt).toDateString()}</Typography.Text>
+            <Typography.Text className="date">{formatDate(created?.seconds)}</Typography.Text>
           </div>
           <div>
             <Typography.Text className="content">{text}</Typography.Text>

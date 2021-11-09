@@ -68,18 +68,28 @@ const MessageListStyled = styled.div`
 `;
 
 export default function ChatWindow() {
+  let messagesEnd = React.createRef();
+  const inputRef = React.useRef(null);
   const { selectedRoom, selectedRoomMembers, selectedRoomId, messages, setIsInviteMemberVisible } =
     React.useContext(AppContext);
-  console.log(messages);
-  console.log(messages.map(s => s?.created?.seconds));
   const {
     user: { uid, photoURL, displayName },
   } = React.useContext(AuthContext);
   const [form] = Form.useForm();
   const subMess = value => {
-    addDocument("messages", { ...form.getFieldsValue(), userId: uid, displayName, photoURL, roomId: selectedRoomId });
-    form.resetFields(["mess"]);
+    if (value.mess) {
+      addDocument("messages", { ...form.getFieldsValue(), userId: uid, displayName, photoURL, roomId: selectedRoomId });
+      form.resetFields(["mess"]);
+      inputRef.current.focus();
+    }
+    ScrollToBottom();
   };
+  const ScrollToBottom = () => {
+    messagesEnd?.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  React.useEffect(() => {
+    ScrollToBottom();
+  });
   if (selectedRoomId !== "") {
     return (
       <WrapperStyled>
@@ -106,18 +116,18 @@ export default function ChatWindow() {
             {messages.map(mess => (
               <Message
                 key={mess.id}
-                createdAt={mess.createdAt}
+                created={mess.created}
                 text={mess.mess}
                 photoURL={mess.photoURL}
                 displayName={mess.displayName}
                 userId={mess.userId}
               ></Message>
             ))}
+            <div style={{ float: "left", clear: "both" }} ref={messagesEnd}></div>
           </MessageListStyled>
-
           <FormStyled form={form} onFinish={subMess}>
             <Form.Item name="mess">
-              <Input bordered={false} autoComplete="off" placeholder="メッセージを入力" />
+              <Input bordered={false} autoComplete="off" placeholder="メッセージを入力" ref={inputRef} />
             </Form.Item>
           </FormStyled>
         </ContentStyled>

@@ -64,7 +64,7 @@ async function fetchUserList(search, curMembers) {
           value: doc.data().uid,
           photoURL: doc.data().photoURL,
         }))
-        .filter(opt => !curMembers.includes(opt.value));
+        .filter(opt => !curMembers?.includes(opt.value));
     });
 }
 export default function InviteMemberModal() {
@@ -75,12 +75,14 @@ export default function InviteMemberModal() {
   const handleOk = () => {
     const roomRef = db.collection("rooms").doc(selectedRoomId);
     roomRef.update({ members: [...selectedRoom?.members, ...value.map(val => val.key)] });
-
+    fetchUserList("", "");
     form.resetFields();
     setValue([]);
     setIsInviteMemberVisible(false);
   };
   const handleCancel = () => {
+    setValue([]);
+    fetchUserList("", "");
     form.resetFields();
     setIsInviteMemberVisible(false);
   };
