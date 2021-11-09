@@ -68,14 +68,17 @@ const MessageListStyled = styled.div`
 `;
 
 export default function ChatWindow() {
-  const { selectedRoom, selectedRoomMembers, selectedRoomId, messages } = React.useContext(AppContext);
+  const { selectedRoom, selectedRoomMembers, selectedRoomId, messages, setIsInviteMemberVisible } =
+    React.useContext(AppContext);
+  console.log(messages);
+  console.log(messages.map(s => s?.created?.seconds));
   const {
     user: { uid, photoURL, displayName },
   } = React.useContext(AuthContext);
   const [form] = Form.useForm();
   const subMess = value => {
     addDocument("messages", { ...form.getFieldsValue(), userId: uid, displayName, photoURL, roomId: selectedRoomId });
-    form.resetFields();
+    form.resetFields(["mess"]);
   };
   if (selectedRoomId !== "") {
     return (
@@ -86,7 +89,7 @@ export default function ChatWindow() {
             <span className="header__description">{selectedRoom.description}</span>
           </div>
           <ButtonGroupStyled>
-            <Button icon={<UserAddOutlined />} type="text">
+            <Button icon={<UserAddOutlined />} onClick={() => setIsInviteMemberVisible(true)} type="text">
               招待
             </Button>
             <Avatar.Group size="small" maxCount={2}>
@@ -101,7 +104,14 @@ export default function ChatWindow() {
         <ContentStyled>
           <MessageListStyled>
             {messages.map(mess => (
-              <Message mess={mess}></Message>
+              <Message
+                key={mess.id}
+                createdAt={mess.createdAt}
+                text={mess.mess}
+                photoURL={mess.photoURL}
+                displayName={mess.displayName}
+                userId={mess.userId}
+              ></Message>
             ))}
           </MessageListStyled>
 

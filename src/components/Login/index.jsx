@@ -4,7 +4,7 @@ import { Button, Row, Col, Typography } from "antd";
 import bgImage from "../../images/Background.png";
 import { GoogleCircleFilled, FacebookFilled } from "@ant-design/icons";
 import firebase, { auth } from "../../firebase/config";
-import { addDocument } from "../../firebase/service";
+import { addDocument, generateKeywords } from "../../firebase/service";
 import { AppContext } from "../../Context/AppProvider";
 
 const { Title } = Typography;
@@ -25,6 +25,7 @@ export default function Login() {
           uid: data.user.uid,
           photoURL: data.user.photoURL,
           providerId: data.additionalUserInfo.providerId,
+          keywords: generateKeywords(data.user.displayName.toLowerCase()),
         });
       }
     } catch (error) {

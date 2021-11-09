@@ -4,7 +4,7 @@ import { AppContext } from "../../Context/AppProvider";
 import { Modal, Form, Input } from "antd";
 import { addDocument } from "../../firebase/service";
 
-export default function AddRoom() {
+export default function AddRoomModal() {
   const { isAddRoomVisible, setIsAddRoomVisible } = React.useContext(AppContext);
   const {
     user: { uid },

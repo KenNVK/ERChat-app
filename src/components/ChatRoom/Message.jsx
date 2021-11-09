@@ -26,44 +26,41 @@ const WrapperStyled = styled.div`
 `;
 function formatDate(seconds) {
   let formattedDate = "";
-  console.log(seconds?.createdAt);
   if (seconds) {
     formattedDate = formatRelative(new Date(seconds * 1000), new Date());
     formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
   }
   return formattedDate;
 }
-export default function Message({ mess, createdAt }) {
+export default function Message({ text, displayName, createdAt, photoURL, userId }) {
   const {
     user: { uid },
   } = React.useContext(AuthContext);
-  //formatDate(mess);
   return (
     <WrapperStyled>
-      {mess.userId === uid ? (
+      {userId === uid ? (
         <div style={{ overflow: "auto" }}>
-          <Tooltip title={formatDate(createdAt?.seconds)} placement="topLeft">
+          <Tooltip title={formatDate(1636333650)} placement="topLeft">
             <Typography.Text
               style={{ float: "right", background: "#71e267", borderRadius: "10px" }}
               className="content"
             >
-              {formatDate(mess.createdAt)}
-              {mess.mess}
+              <Typography.Text className="date">{createdAt}</Typography.Text>
+              {text}
             </Typography.Text>
           </Tooltip>
         </div>
       ) : (
-        <Tooltip title={formatDate(mess.createdAt?.seconds)} placement="leftTop">
+        <>
           <div>
-            <Avatar src={mess.photoURL}>{mess.displayName?.charAt(0)}</Avatar>
-            <Typography.Text className="author">{mess.displayName}</Typography.Text>
-            <Typography.Text className="date">{mess.createdAt}</Typography.Text>
+            <Avatar src={photoURL}>{displayName?.charAt(0)}</Avatar>
+            <Typography.Text className="author">{displayName}</Typography.Text>
+            <Typography.Text className="date">{new Date(createdAt).toDateString()}</Typography.Text>
           </div>
-
           <div>
-            <Typography.Text className="content">{mess.text}</Typography.Text>
+            <Typography.Text className="content">{text}</Typography.Text>
           </div>
-        </Tooltip>
+        </>
       )}
     </WrapperStyled>
   );
