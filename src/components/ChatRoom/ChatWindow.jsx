@@ -68,28 +68,29 @@ const MessageListStyled = styled.div`
 `;
 
 export default function ChatWindow() {
-  let messagesEnd = React.createRef();
+  const messagesRef = React.useRef(null);
   const inputRef = React.useRef(null);
+  const [form] = Form.useForm();
   const { selectedRoom, selectedRoomMembers, selectedRoomId, messages, setIsInviteMemberVisible } =
     React.useContext(AppContext);
   const {
     user: { uid, photoURL, displayName },
   } = React.useContext(AuthContext);
-  const [form] = Form.useForm();
-  const subMess = value => {
+
+  const handleOnSubmit = value => {
     if (value.mess) {
       addDocument("messages", { ...form.getFieldsValue(), userId: uid, displayName, photoURL, roomId: selectedRoomId });
       form.resetFields(["mess"]);
-      inputRef.current.focus();
+      // focus to input again after submit
+      inputRef?.current.focus();
     }
-    ScrollToBottom();
   };
-  const ScrollToBottom = () => {
-    messagesEnd?.current?.scrollIntoView({ behavior: "smooth" });
-  };
+
   React.useEffect(() => {
-    ScrollToBottom();
-  });
+    // scroll to bottom affter message changed
+    if (messagesRef?.current) messagesRef?.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   if (selectedRoomId !== "") {
     return (
       <WrapperStyled>
@@ -103,6 +104,8 @@ export default function ChatWindow() {
               招待
             </Button>
             <Avatar.Group size="small" maxCount={2}>
+              {console.log("useFirestore", selectedRoomMembers)}
+
               {selectedRoomMembers.map(member => (
                 <Tooltip key={member?.id} placement="bottomLeft" title={member?.displayName}>
                   <Avatar src={member?.photoURL}>{member.displayName?.charAt(0)}</Avatar>
@@ -123,9 +126,9 @@ export default function ChatWindow() {
                 userId={mess.userId}
               ></Message>
             ))}
-            <div style={{ float: "left", clear: "both" }} ref={messagesEnd}></div>
+            <div style={{ float: "left", clear: "both" }} ref={messagesRef}></div>
           </MessageListStyled>
-          <FormStyled form={form} onFinish={subMess}>
+          <FormStyled form={form} onFinish={handleOnSubmit}>
             <Form.Item name="mess">
               <Input bordered={false} autoComplete="off" placeholder="メッセージを入力" ref={inputRef} />
             </Form.Item>

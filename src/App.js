@@ -7,7 +7,7 @@ import AuthProvider from "./Context/AuthProvider";
 import AppProvider from "./Context/AppProvider";
 import AddRoomModal from "./components/Modals/AddRoomModal";
 import InviteMemberModal from "./components/Modals/InviteMemberModal";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
 function App() {
   // 最初にレンダリングされる時のみタイトルが出力される
@@ -15,20 +15,22 @@ function App() {
     document.title = "ERChat";
   }, []);
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppProvider>
-          <Switch>
+    <React.StrictMode>
+      <BrowserRouter>
+        <AuthProvider>
+          <AppProvider>
             <Switch>
-              <Route component={Login} path="/login" />
-              <Route component={ChatRoom} path="/" />
+              <Switch>
+                <Route component={Login} path="/login" />
+                <Route component={ChatRoom} path="/" />
+              </Switch>
             </Switch>
-          </Switch>
-          <AddRoomModal />
-          <InviteMemberModal />
-        </AppProvider>
-      </AuthProvider>
-    </BrowserRouter>
+            <AddRoomModal />
+            <InviteMemberModal />
+          </AppProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </React.StrictMode>
   );
 }
 

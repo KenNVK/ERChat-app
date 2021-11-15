@@ -2,6 +2,7 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
+const createMenu = require("./menu");
 
 function createWindow() {
   // Create the browser window.
@@ -20,6 +21,9 @@ function createWindow() {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
+
+  //Create menu
+  createMenu();
 }
 
 app.whenReady().then(() => {

@@ -11,7 +11,9 @@ export default function AddRoomModal() {
   } = React.useContext(AuthContext);
   const [form] = Form.useForm();
   const hanldeOk = () => {
-    addDocument("rooms", { ...form.getFieldsValue(), members: [uid] });
+    if (form.getFieldsValue().name && form.getFieldsValue().description) {
+      addDocument("rooms", { ...form.getFieldsValue(), members: [uid] });
+    }
     form.resetFields();
     setIsAddRoomVisible(false);
   };
@@ -19,7 +21,7 @@ export default function AddRoomModal() {
     setIsAddRoomVisible(false);
   };
   return (
-    <>
+    <React.StrictMode>
       <Modal title="ルーム作成" onOk={hanldeOk} onCancel={handleCancel} visible={isAddRoomVisible}>
         <Form form={form} layout="vertical">
           <Form.Item name="name" label="ルーム名：" required={[{ required: true }]}>
@@ -30,6 +32,6 @@ export default function AddRoomModal() {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </React.StrictMode>
   );
 }

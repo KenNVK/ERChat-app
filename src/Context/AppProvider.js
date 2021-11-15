@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { AuthContext } from "../Context/AuthProvider";
+import { AuthContext } from "./AuthProvider";
 import useFirestore from "../hooks/useFirestore";
-export const AppContext = React.createContext();
 
+export const AppContext = React.createContext();
 export default function AppProvider({ children }) {
   const [isAddRoomVisible, setIsAddRoomVisible] = useState(false);
   const [isInviteMemberVisible, setIsInviteMemberVisible] = useState(false);
@@ -22,6 +22,7 @@ export default function AppProvider({ children }) {
     () => rooms.find(room => room.id === selectedRoomId) || {},
     [selectedRoomId, rooms],
   );
+
   const messagesCondition = React.useMemo(() => {
     return {
       fieldName: "roomId",
@@ -37,7 +38,8 @@ export default function AppProvider({ children }) {
       compareValue: selectedRoom.members,
     };
   }, [selectedRoom.members]);
-  const selectedRoomMembers = useFirestore("users", usersCondition);
+  const selectedRoomMembers = useFirestore("users", "F6m7F9QRHJcsdkfWct3CcMN6dy4o");
+  console.log(usersCondition);
   return (
     <AppContext.Provider
       value={{

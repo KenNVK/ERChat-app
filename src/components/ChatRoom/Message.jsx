@@ -6,6 +6,9 @@ import { formatRelative } from "date-fns/esm";
 
 const WrapperStyled = styled.div`
   margin-bottom: 10px;
+  .wrap-content {
+    overflow: hidden;
+  }
   .author {
     margin-left: 5px;
     font-weight: 600;
@@ -18,10 +21,12 @@ const WrapperStyled = styled.div`
   }
 
   .content {
-    background: White;
+    background: #71e267;
     width: fit-content;
-    padding: 10px;
-    margin-left: 30px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+    float: right;
   }
 `;
 function formatDate(seconds) {
@@ -39,12 +44,9 @@ export default function Message({ text, displayName, created, photoURL, userId }
   return (
     <WrapperStyled>
       {userId === uid ? (
-        <div style={{ overflow: "auto" }}>
+        <div className="wrap-content">
           <Tooltip title={formatDate(created?.seconds)} placement="topLeft">
-            <Typography.Text
-              style={{ float: "right", background: "#71e267", borderRadius: "10px" }}
-              className="content"
-            >
+            <Typography.Text style={{}} className="content">
               {text}
             </Typography.Text>
           </Tooltip>

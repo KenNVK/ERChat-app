@@ -4,6 +4,8 @@ import { AppContext } from "../../Context/AppProvider";
 // import { AuthContext } from "../../Context/AuthProvider";
 import { debounce } from "lodash";
 import { db } from "../../firebase/config";
+import { query, collection, where, orderBy, limit, getDocs, doc } from "firebase/firestore";
+
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, curMembers, ...props }) {
   // Search: abcddassdfasdf
 
@@ -50,31 +52,36 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, curMembers, ...pr
     </Select>
   );
 }
+
 async function fetchUserList(search, curMembers) {
-  return db
-    .collection("users")
-    .where("keywords", "array-contains", search?.toLowerCase())
-    .orderBy("displayName")
-    .limit(20)
-    .get()
-    .then(snapshot => {
-      return snapshot.docs
-        .map(doc => ({
-          label: doc.data().displayName,
-          value: doc.data().uid,
-          photoURL: doc.data().photoURL,
-        }))
-        .filter(opt => !curMembers?.includes(opt.value));
-    });
+  const q = query(
+    collection(db, "users"),
+    where("keywords", "array-contains", search?.toLowerCase()),
+    orderBy("displayName"),
+    limit(20),
+  );
+  const querySnapshot = await getDocs(q);
+  const snapShot = querySnapshot.docs.map(doc => {
+    return {
+      label: doc.data().displayName,
+      value: doc.data().uid,
+      photoURL: doc.data().photoURL,
+    };
+  });
+  console.log(snapShot);
+  return snapShot.filter(opt => !curMembers?.includes(opt.value));
 }
+
 export default function InviteMemberModal() {
   const [value, setValue] = useState([]);
   const { isInviteMemberVisible, setIsInviteMemberVisible, selectedRoom, selectedRoomId } =
     React.useContext(AppContext);
   const [form] = Form.useForm();
   const handleOk = () => {
-    const roomRef = db.collection("rooms").doc(selectedRoomId);
-    roomRef.update({ members: [...selectedRoom?.members, ...value.map(val => val.key)] });
+    //const roomRef = db.collection("rooms").doc(selectedRoomId);
+    const roomRef = doc(db, "rooms", selectedRoomId);
+    console.log(roomRef);
+    //roomRef.update({ members: [...selectedRoom?.members, ...value.map(val => val.key)] });
     fetchUserList("", "");
     form.resetFields();
     setValue([]);
