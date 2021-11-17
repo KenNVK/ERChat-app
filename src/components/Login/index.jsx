@@ -30,7 +30,8 @@ const LoginContainer = styled.div`
         color: #333;
       }
 
-      .google-btn {
+      .google-btn,
+      .facebook-btn {
         display: flex;
         align-items: center;
         min-width: 240px;
@@ -61,27 +62,13 @@ const LoginContainer = styled.div`
         }
       }
       .facebook-btn {
-        display: flex;
-        align-items: center;
-        min-width: 240px;
-        width: 65%;
-        margin-top: 12px;
         background: linear-gradient(to right, #1672c7, rgb(64 106 159 / 63%));
-        border: none;
-
-        &__content {
-          display: flex;
-          align-items: center;
-          flex: 1;
-        }
+        margin-top: 12px;
 
         &__icon {
+          background: none;
           fontsize: 1.6rem;
           margin: 0 0.8rem;
-        }
-
-        $__text {
-          flex: 1;
         }
       }
     }
@@ -98,13 +85,14 @@ export default function Login() {
     try {
       const data = await signInWithPopup(auth, provider);
       setSelectedRoomId("");
-      if (data.additionalUserInfo?.isNewUser) {
+      console.log(data);
+      if (data._tokenResponse?.isNewUser) {
         addDocument("users", {
           displayName: data.user.displayName,
           email: data.user.email,
           uid: data.user.uid,
           photoURL: data.user.photoURL,
-          providerId: data.additionalUserInfo.providerId,
+          providerId: data.providerId,
           keywords: generateKeywords(data.user.displayName.toLowerCase()),
         });
       }

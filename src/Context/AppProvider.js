@@ -38,8 +38,8 @@ export default function AppProvider({ children }) {
       compareValue: selectedRoom.members,
     };
   }, [selectedRoom.members]);
-  const selectedRoomMembers = useFirestore("users", "F6m7F9QRHJcsdkfWct3CcMN6dy4o");
-  console.log(usersCondition);
+  const selectedRoomMembers = useFirestore("users", usersCondition);
+
   return (
     <AppContext.Provider
       value={{

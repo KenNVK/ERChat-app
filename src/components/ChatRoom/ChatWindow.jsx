@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { UserAddOutlined } from "@ant-design/icons";
-import { Tooltip, Avatar, Button, Input, Form, Alert } from "antd";
+import { Tooltip, Avatar, Button, Alert } from "antd";
 import { AppContext } from "../../Context/AppProvider";
 import { AuthContext } from "../../Context/AuthProvider";
 import { addDocument } from "../../firebase/service";
 import styled from "styled-components";
 import Message from "./Message";
+import InputEmoji from "react-input-emoji";
 
 const HeaderStyled = styled.div`
   display: flex;
@@ -49,28 +50,15 @@ const ContentStyled = styled.div`
   padding: 11px;
 `;
 
-const FormStyled = styled(Form)`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2px 2px 2px 0;
-  border: 1px solid rgb(230, 230, 230);
-  border-radius: 2px;
-  .ant-form-item {
-    flex: 1;
-    margin-bottom: 0;
-  }
-`;
-
 const MessageListStyled = styled.div`
   max-height: 100%;
   overflow-y: auto;
 `;
 
 export default function ChatWindow() {
+  const [text, setText] = useState("");
   const messagesRef = React.useRef(null);
   const inputRef = React.useRef(null);
-  const [form] = Form.useForm();
   const { selectedRoom, selectedRoomMembers, selectedRoomId, messages, setIsInviteMemberVisible } =
     React.useContext(AppContext);
   const {
@@ -78,9 +66,8 @@ export default function ChatWindow() {
   } = React.useContext(AuthContext);
 
   const handleOnSubmit = value => {
-    if (value.mess) {
-      addDocument("messages", { ...form.getFieldsValue(), userId: uid, displayName, photoURL, roomId: selectedRoomId });
-      form.resetFields(["mess"]);
+    if (value) {
+      addDocument("messages", { ...{ mess: value }, userId: uid, displayName, photoURL, roomId: selectedRoomId });
       // focus to input again after submit
       inputRef?.current.focus();
     }
@@ -104,8 +91,6 @@ export default function ChatWindow() {
               招待
             </Button>
             <Avatar.Group size="small" maxCount={2}>
-              {console.log("useFirestore", selectedRoomMembers)}
-
               {selectedRoomMembers.map(member => (
                 <Tooltip key={member?.id} placement="bottomLeft" title={member?.displayName}>
                   <Avatar src={member?.photoURL}>{member.displayName?.charAt(0)}</Avatar>
@@ -128,11 +113,17 @@ export default function ChatWindow() {
             ))}
             <div style={{ float: "left", clear: "both" }} ref={messagesRef}></div>
           </MessageListStyled>
-          <FormStyled form={form} onFinish={handleOnSubmit}>
-            <Form.Item name="mess">
-              <Input bordered={false} autoComplete="off" placeholder="メッセージを入力" ref={inputRef} />
-            </Form.Item>
-          </FormStyled>
+
+          <InputEmoji
+            onEnter={handleOnSubmit}
+            value={text}
+            onChange={setText}
+            cleanOnEnter
+            placeholder="メッセージを入力"
+            ref={inputRef}
+            borderColor="#bbb"
+            borderRadius="14px"
+          />
         </ContentStyled>
       </WrapperStyled>
     );

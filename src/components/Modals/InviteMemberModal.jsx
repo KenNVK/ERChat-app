@@ -4,7 +4,7 @@ import { AppContext } from "../../Context/AppProvider";
 // import { AuthContext } from "../../Context/AuthProvider";
 import { debounce } from "lodash";
 import { db } from "../../firebase/config";
-import { query, collection, where, orderBy, limit, getDocs, doc } from "firebase/firestore";
+import { query, collection, where, orderBy, limit, getDocs, doc, updateDoc, arrayUnion } from "firebase/firestore";
 
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, curMembers, ...props }) {
   // Search: abcddassdfasdf
@@ -31,7 +31,7 @@ function DebounceSelect({ fetchOptions, debounceTimeout = 300, curMembers, ...pr
       // clear when unmount
       setOptions([]);
     };
-  }, []);
+  }, [curMembers]);
 
   return (
     <Select
@@ -68,7 +68,6 @@ async function fetchUserList(search, curMembers) {
       photoURL: doc.data().photoURL,
     };
   });
-  console.log(snapShot);
   return snapShot.filter(opt => !curMembers?.includes(opt.value));
 }
 
@@ -78,10 +77,8 @@ export default function InviteMemberModal() {
     React.useContext(AppContext);
   const [form] = Form.useForm();
   const handleOk = () => {
-    //const roomRef = db.collection("rooms").doc(selectedRoomId);
     const roomRef = doc(db, "rooms", selectedRoomId);
-    console.log(roomRef);
-    //roomRef.update({ members: [...selectedRoom?.members, ...value.map(val => val.key)] });
+    updateDoc(roomRef, { members: arrayUnion(...selectedRoom?.members, ...value.map(val => val.key)) });
     fetchUserList("", "");
     form.resetFields();
     setValue([]);
