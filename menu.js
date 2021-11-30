@@ -1,6 +1,4 @@
 const { Menu, shell } = require("electron");
-// const { auth } = require("./src/firebase/config");
-// console.log(auth);
 
 module.exports = function createMenu() {
   const isMac = process.platform === "darwin";

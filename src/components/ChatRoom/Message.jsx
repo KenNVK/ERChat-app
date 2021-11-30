@@ -20,13 +20,21 @@ const WrapperStyled = styled.div`
     color: #a7a7a7;
   }
 
-  .content {
-    background: #71e267;
+  .content,
+  .diff-owner-content {
+    background: #37373a;
+    color: #fff;
     width: fit-content;
     padding: 6px 10px;
-    border-radius: 5px;
+    border-radius: 3px;
     margin-right: 10px;
     float: right;
+  }
+
+  .diff-owner-content {
+    float: none;
+    margin-left: 38px;
+    background: #e7e2e2;
   }
 `;
 function formatDate(seconds) {
@@ -45,10 +53,8 @@ export default function Message({ text, displayName, created, photoURL, userId }
     <WrapperStyled>
       {userId === uid ? (
         <div className="wrap-content">
-          <Tooltip title={formatDate(created?.seconds)} placement="topLeft">
-            <Typography.Text style={{}} className="content">
-              {text}
-            </Typography.Text>
+          <Tooltip title={formatDate(created?.seconds)} placement="left">
+            <Typography.Text className="content">{text}</Typography.Text>
           </Tooltip>
         </div>
       ) : (
@@ -59,7 +65,7 @@ export default function Message({ text, displayName, created, photoURL, userId }
             <Typography.Text className="date">{formatDate(created?.seconds)}</Typography.Text>
           </div>
           <div>
-            <Typography.Text className="content">{text}</Typography.Text>
+            <Typography.Text className="diff-owner-content">{text}</Typography.Text>
           </div>
         </>
       )}

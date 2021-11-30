@@ -1,8 +1,18 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, Menu } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
 const createMenu = require("./menu");
+
+let template = [
+  { label: "もとに戻す", role: "undo" },
+  { label: "やり直す", role: "redo" },
+  { type: "separator" },
+  { label: "切り取り", role: "cut" },
+  { label: "コピー", role: "copy" },
+  { label: "貼り付け", role: "paste" },
+];
+let contextMenu = Menu.buildFromTemplate(template);
 
 function createWindow() {
   // Create the browser window.
@@ -21,6 +31,10 @@ function createWindow() {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
+
+  mainWindow.webContents.on("context-menu", () => {
+    contextMenu.popup();
+  });
 
   //Create menu
   createMenu();
