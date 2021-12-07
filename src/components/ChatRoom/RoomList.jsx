@@ -35,7 +35,7 @@ export default function RoomList() {
     setIsAddRoomVisible(true);
   };
   return (
-    <Collapse ghost defaultCollapse={["1"]}>
+    <Collapse ghost defaultActiveKey={["1"]}>
       <PanelStyled header="リストルーム" key="1">
         {rooms.map(room => (
           <LinkStyled key={room.id} onClick={() => setSelectedRoomId(room.id)}>

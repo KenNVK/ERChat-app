@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "antd/dist/antd.css";
-import { Button, Row, Col, Typography } from "antd";
+import { Button, Row, Col, Typography, Image } from "antd";
 import bgImage from "../../images/Background.png";
+import logoImage from "../../images/logoER.png";
 import { GoogleCircleFilled, FacebookFilled } from "@ant-design/icons";
 import { auth } from "../../firebase/config";
 import { FacebookAuthProvider, GoogleAuthProvider, signInWithPopup } from "@firebase/auth";
@@ -10,10 +11,12 @@ import { AppContext } from "../../Context/AppProvider";
 import styled from "styled-components";
 
 const LoginContainer = styled.div`
+  user-select: none;
+  --webkit-user-select: none;
   .login {
     &__background {
       background: url(${bgImage}) no-repeat center center fixed;
-      backgroundsize: cover;
+      background-size: cover;
       height: 100vh;
       width: 100%;
     }
@@ -26,7 +29,8 @@ const LoginContainer = styled.div`
       padding: 120px 0 200px;
 
       &__title {
-        marginbottom: 50px;
+        display: block;
+        margin: 30px 50px;
         color: #333;
       }
 
@@ -44,6 +48,7 @@ const LoginContainer = styled.div`
           align-items: center;
           flex: 1;
         }
+
         &__icon {
           background: conic-gradient(
               from -45deg,
@@ -113,7 +118,8 @@ export default function Login() {
       <Row>
         <Col span={14} className="login__background"></Col>
         <Col span={10} className="login__content">
-          <Title className="content__title">Sign in</Title>
+          <img className="login__content__logo" width={100} src={logoImage} alt="logo" />
+          <Title className="login__content__title">Sign in</Title>
           <Button
             className="google-btn"
             size="large"
