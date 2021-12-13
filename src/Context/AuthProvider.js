@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { auth } from "../firebase/config";
 import { onAuthStateChanged } from "@firebase/auth";
 import { Spin } from "antd";
+console.log(onAuthStateChanged);
 
 export const AuthContext = React.createContext();
 

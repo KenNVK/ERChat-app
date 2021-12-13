@@ -26,7 +26,6 @@ const LoginContainer = styled.div`
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 120px 0 200px;
 
       &__title {
         display: block;
@@ -90,7 +89,6 @@ export default function Login() {
     try {
       const data = await signInWithPopup(auth, provider);
       setSelectedRoomId("");
-      console.log(data);
       if (data._tokenResponse?.isNewUser) {
         addDocument("users", {
           displayName: data.user.displayName,
