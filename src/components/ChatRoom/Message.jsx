@@ -1,7 +1,7 @@
 import React from "react";
-import { Avatar, Typography, Tooltip } from "antd";
+import { Avatar, Typography, Tooltip, Badge } from "antd";
 import styled from "styled-components";
-import { AuthContext } from "../../Context/AuthProvider";
+import { AppContext } from "../../Context/AppProvider";
 import { formatRelative } from "date-fns/esm";
 
 const WrapperStyled = styled.div`
@@ -34,7 +34,7 @@ const WrapperStyled = styled.div`
   .diff-owner-content {
     float: none;
     margin-left: 38px;
-    background: #e7e2e2;
+    background: #a9a9a9;
   }
 `;
 function formatDate(seconds) {
@@ -45,13 +45,12 @@ function formatDate(seconds) {
   }
   return formattedDate;
 }
-export default function Message({ text, displayName, created, photoURL, userId }) {
-  const {
-    user: { uid },
-  } = React.useContext(AuthContext);
+export default function Message({ text, created, uid }) {
+  const { currentUser, selectedRoomMembers } = React.useContext(AppContext);
+  const author = selectedRoomMembers.filter(x => x.uid === uid)[0];
   return (
     <WrapperStyled>
-      {userId === uid ? (
+      {uid === currentUser?.uid ? (
         <div className="wrap-content">
           <Tooltip title={formatDate(created?.seconds)} placement="left">
             <Typography.Text className="content">{text}</Typography.Text>
@@ -60,8 +59,10 @@ export default function Message({ text, displayName, created, photoURL, userId }
       ) : (
         <>
           <div>
-            <Avatar src={photoURL}>{displayName?.charAt(0)}</Avatar>
-            <Typography.Text className="author">{displayName}</Typography.Text>
+            <Badge status="success" offset={[0, 5]} dot={author?.isOnline ? true : false} showZero>
+              <Avatar src={author?.photoURL}>{author?.displayName?.charAt(0)}</Avatar>
+            </Badge>
+            <Typography.Text className="author">{author?.displayName}</Typography.Text>
             <Typography.Text className="date">{formatDate(created?.seconds)}</Typography.Text>
           </div>
           <div>

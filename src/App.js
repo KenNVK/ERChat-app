@@ -7,6 +7,7 @@ import AuthProvider from "./Context/AuthProvider";
 import AppProvider from "./Context/AppProvider";
 import AddRoomModal from "./components/Modals/AddRoomModal";
 import InviteMemberModal from "./components/Modals/InviteMemberModal";
+import ModifyUserModal from "./components/Modals/ModifyUserModal";
 import React, { useEffect } from "react";
 
 function App() {
@@ -15,22 +16,21 @@ function App() {
     document.title = "ERChat";
   }, []);
   return (
-    <React.StrictMode>
-      <BrowserRouter>
-        <AuthProvider>
-          <AppProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppProvider>
+          <Switch>
             <Switch>
-              <Switch>
-                <Route component={Login} path="/login" />
-                <Route component={ChatRoom} path="/" />
-              </Switch>
+              <Route component={Login} path="/login" />
+              <Route component={ChatRoom} path="/" />
             </Switch>
-            <AddRoomModal />
-            <InviteMemberModal />
-          </AppProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </React.StrictMode>
+          </Switch>
+          <ModifyUserModal />
+          <AddRoomModal />
+          <InviteMemberModal />
+        </AppProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

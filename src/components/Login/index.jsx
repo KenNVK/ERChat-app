@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "antd/dist/antd.css";
-import { Button, Row, Col, Typography, Image } from "antd";
+import { Button, Row, Col, Typography } from "antd";
 import bgImage from "../../images/Background.png";
 import logoImage from "../../images/logoER.png";
 import { GoogleCircleFilled, FacebookFilled } from "@ant-design/icons";
@@ -97,6 +97,7 @@ export default function Login() {
           photoURL: data.user.photoURL,
           providerId: data.providerId,
           keywords: generateKeywords(data.user.displayName.toLowerCase()),
+          isOnline: true,
         });
       }
     } catch (error) {

@@ -36,7 +36,7 @@ export default function RoomList() {
   };
   return (
     <Collapse ghost defaultActiveKey={["1"]}>
-      <PanelStyled header="リストルーム" key="1">
+      <PanelStyled header="ルームリスト" key={rooms.length === 0 ? "" : "1"}>
         {rooms.map(room => (
           <LinkStyled key={room.id} onClick={() => setSelectedRoomId(room.id)}>
             {room.name}

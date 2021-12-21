@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { UserAddOutlined } from "@ant-design/icons";
-import { Tooltip, Avatar, Button, Alert } from "antd";
+import { Tooltip, Avatar, Alert, Menu, Dropdown, Badge } from "antd";
+import { ExportOutlined } from "@ant-design/icons";
 import { AppContext } from "../../Context/AppProvider";
-import { AuthContext } from "../../Context/AuthProvider";
 import { addDocument } from "../../firebase/service";
 import styled from "styled-components";
 import Message from "./Message";
@@ -59,19 +59,48 @@ export default function ChatWindow() {
   const [text, setText] = useState("");
   const messagesRef = React.useRef(null);
   const inputRef = React.useRef(null);
-  const { selectedRoom, selectedRoomMembers, selectedRoomId, messages, setIsInviteMemberVisible } =
-    React.useContext(AppContext);
   const {
-    user: { uid, photoURL, displayName },
-  } = React.useContext(AuthContext);
+    selectedRoom,
+    selectedRoomMembers,
+    selectedRoomId,
+    leaveRoomChat,
+    messages,
+    setIsInviteMemberVisible,
+    currentUser,
+  } = React.useContext(AppContext);
 
   const handleOnSubmit = value => {
     if (value) {
-      addDocument("messages", { ...{ mess: value }, userId: uid, displayName, photoURL, roomId: selectedRoomId });
+      addDocument("messages", {
+        ...{ mess: value },
+        uid: currentUser?.uid,
+        roomId: selectedRoomId,
+      });
       // focus to input again after submit
       inputRef?.current.focus();
     }
   };
+
+  function handleMenuClick(e) {
+    if (e.key === "1") {
+      setIsInviteMemberVisible(true);
+    } else if (e.key === "2") {
+      leaveRoomChat();
+    }
+  }
+
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      <Menu.Item key="1">
+        <UserAddOutlined />
+        <span>メンバーを追加する</span>
+      </Menu.Item>
+      <Menu.Item key="2" danger>
+        <ExportOutlined />
+        <span>チャットを退出</span>
+      </Menu.Item>
+    </Menu>
+  );
 
   React.useEffect(() => {
     // scroll to bottom affter message changed
@@ -87,29 +116,22 @@ export default function ChatWindow() {
             <span className="header__description">{selectedRoom.description}</span>
           </div>
           <ButtonGroupStyled>
-            <Button icon={<UserAddOutlined />} onClick={() => setIsInviteMemberVisible(true)} type="text">
-              招待
-            </Button>
             <Avatar.Group size="small" maxCount={2}>
               {selectedRoomMembers.map(member => (
                 <Tooltip key={member?.id} placement="bottomLeft" title={member?.displayName}>
-                  <Avatar src={member?.photoURL}>{member.displayName?.charAt(0)}</Avatar>
+                  <Badge status="success" offset={[-5, 20]} dot={member?.isOnline ? true : false} showZero>
+                    <Avatar src={member?.photoURL}>{member.displayName?.charAt(0)}</Avatar>
+                  </Badge>
                 </Tooltip>
               ))}
             </Avatar.Group>
+            <Dropdown.Button overlay={menu} />
           </ButtonGroupStyled>
         </HeaderStyled>
         <ContentStyled>
           <MessageListStyled>
             {messages.map(mess => (
-              <Message
-                key={mess.id}
-                created={mess.created}
-                text={mess.mess}
-                photoURL={mess.photoURL}
-                displayName={mess.displayName}
-                userId={mess.userId}
-              ></Message>
+              <Message key={mess.id} created={mess.created} text={mess.mess} uid={mess.uid}></Message>
             ))}
             <div style={{ float: "left", clear: "both" }} ref={messagesRef}></div>
           </MessageListStyled>

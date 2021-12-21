@@ -1,9 +1,10 @@
 import React from "react";
 import { auth } from "../../firebase/config";
-import { Button, Avatar, Typography, Tooltip } from "antd";
+import { Avatar, Typography, Tooltip } from "antd";
 import { useHistory } from "react-router";
 import styled from "styled-components";
-import { LogoutOutlined } from "@ant-design/icons";
+import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
+import { AppContext } from "../../Context/AppProvider";
 import { AuthContext } from "../../Context/AuthProvider";
 import { Menu } from "antd";
 const WrapperStyled = styled.div`
@@ -33,14 +34,16 @@ const rootSubmenuKeys = ["sub1"];
 
 export default function UserInfo() {
   const [openKeys, setOpenKeys] = React.useState([]);
+  const { user } = React.useContext(AuthContext);
+  const { setIsModifyUserVisible, currentUser, setStatusUser } = React.useContext(AppContext);
   const history = useHistory();
   const handleLogout = () => {
     auth.signOut();
     history.push("/login");
+    user.isOnline = false;
+    setStatusUser(false);
   };
-  const {
-    user: { displayName, photoURL },
-  } = React.useContext(AuthContext);
+  const { displayName, photoURL } = currentUser;
 
   const onOpenChange = keys => {
     const latestOpenKey = keys.find(key => openKeys.indexOf(key) === -1);
@@ -56,15 +59,20 @@ export default function UserInfo() {
         <SubMenu
           key="sub1"
           icon={<Avatar src={photoURL ? photoURL : ""}>{displayName?.charAt(0)}</Avatar>}
-          title={<Typography.Text className="username">{displayName ? displayName : ""}</Typography.Text>}
+          title={
+            <Tooltip placement="bottomLeft" title={displayName ? displayName : ""}>
+              <Typography.Text className="username">{displayName ? displayName : ""}</Typography.Text>
+            </Tooltip>
+          }
         >
-          <Menu.Item key="1">Option 1</Menu.Item>
+          <Menu.Item key="1" onClick={() => setIsModifyUserVisible(true)}>
+            <SettingOutlined />
+            <span>情報変更</span>
+          </Menu.Item>
           <Menu.Item key="2" onClick={handleLogout}>
             <LogoutOutlined />
             <span>ログアウト</span>
           </Menu.Item>
-          <Menu.Item key="3">Option 3</Menu.Item>
-          <Menu.Item key="4">Option 4</Menu.Item>
         </SubMenu>
       </Menu>
       <Tooltip placement="leftTop" title="ログアウト"></Tooltip>

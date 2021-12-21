@@ -79,14 +79,12 @@ export default function InviteMemberModal() {
   const handleOk = () => {
     const roomRef = doc(db, "rooms", selectedRoomId);
     updateDoc(roomRef, { members: arrayUnion(...selectedRoom?.members, ...value.map(val => val.key)) });
-    fetchUserList("", "");
-    form.resetFields();
     setValue([]);
+    form.resetFields();
     setIsInviteMemberVisible(false);
   };
   const handleCancel = () => {
     setValue([]);
-    fetchUserList("", "");
     form.resetFields();
     setIsInviteMemberVisible(false);
   };
