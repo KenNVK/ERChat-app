@@ -81,8 +81,10 @@ export default function InviteMemberModal() {
     const roomRef = doc(db, "rooms", selectedRoomId);
     updateDoc(roomRef, { members: arrayUnion(...value.map(val => val.key)) });
     addDocument("messages", {
-      mess: currentUser?.displayName + "が" + value.map(val => val.label[1] + " ") + "をグループに紹介しました。",
+      mess: currentUser.displayName + "が" + value.map(val => val.label[1] + " ") + "をグループに紹介しました。",
       isAnnounce: true,
+      invitedUser: currentUser.displayName,
+      membersUid: [...value.map(val => val.key)],
       roomId: selectedRoomId,
     });
     setValue([]);

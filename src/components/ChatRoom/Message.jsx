@@ -69,7 +69,7 @@ export default function Message({ text, created, uid, isAnnounce }) {
             <Badge status="success" offset={[0, 5]} dot={author?.isOnline ? true : false} showZero>
               <Avatar src={author?.photoURL}>{author?.displayName?.charAt(0)}</Avatar>
             </Badge>
-            <Typography.Text className="author">{author?.displayName && "無名のユーザー"}</Typography.Text>
+            <Typography.Text className="author">{author?.displayName || "無名のユーザー"}</Typography.Text>
             <Typography.Text className="date">{formatDate(created?.seconds)}</Typography.Text>
           </div>
           <div>

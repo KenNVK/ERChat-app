@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { UserAddOutlined } from "@ant-design/icons";
-import { Tooltip, Avatar, Alert, Menu, Dropdown, Badge } from "antd";
+import { Tooltip, Avatar, Alert, Menu, Dropdown, Badge, Button } from "antd";
 import { ExportOutlined } from "@ant-design/icons";
 import { AppContext } from "../../Context/AppProvider";
 import { addDocument } from "../../firebase/service";
@@ -64,9 +64,11 @@ export default function ChatWindow() {
     selectedRoomMembers,
     selectedRoomId,
     leaveRoomChat,
+    stayRoomChat,
     messages,
     setIsInviteMemberVisible,
     currentUser,
+    userAnnounces,
   } = React.useContext(AppContext);
 
   const handleOnSubmit = value => {
@@ -76,10 +78,17 @@ export default function ChatWindow() {
         uid: currentUser?.uid,
         roomId: selectedRoomId,
         isAnnounce: false,
+        membersUid: [],
       });
       // focus to input again after submit
       inputRef?.current.focus();
     }
+  };
+  const handleAccept = () => {
+    stayRoomChat();
+  };
+  const handleDeny = () => {
+    leaveRoomChat();
   };
 
   function handleMenuClick(e) {
@@ -103,12 +112,9 @@ export default function ChatWindow() {
     </Menu>
   );
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     // scroll to bottom affter message changed
     if (messagesRef?.current) messagesRef?.current.scrollIntoView({ behavior: "smooth" });
-    return () => {
-      messagesRef.current = null;
-    };
   }, [messages]);
 
   return (
@@ -133,31 +139,48 @@ export default function ChatWindow() {
               <Dropdown.Button overlay={menu} />
             </ButtonGroupStyled>
           </HeaderStyled>
-          <ContentStyled>
-            <MessageListStyled>
-              {messages.map(mess => (
-                <Message
-                  key={mess.id}
-                  created={mess.created}
-                  text={mess.mess}
-                  uid={mess.uid}
-                  isAnnounce={mess.isAnnounce}
-                ></Message>
-              ))}
-              <div style={{ float: "left", clear: "both" }} ref={messagesRef}></div>
-            </MessageListStyled>
 
-            <InputEmoji
-              onEnter={handleOnSubmit}
-              value={text}
-              onChange={setText}
-              cleanOnEnter
-              placeholder="メッセージを入力"
-              ref={inputRef}
-              borderColor="#bbb"
-              borderRadius="14px"
-            />
-          </ContentStyled>
+          {userAnnounces === undefined ? (
+            <ContentStyled>
+              <MessageListStyled>
+                {messages.map(mess => (
+                  <Message
+                    key={mess.id}
+                    created={mess.created}
+                    text={mess.mess}
+                    uid={mess.uid}
+                    isAnnounce={mess.isAnnounce}
+                  ></Message>
+                ))}
+                <div style={{ float: "left", clear: "both" }} ref={messagesRef}></div>
+              </MessageListStyled>
+              <InputEmoji
+                onEnter={handleOnSubmit}
+                value={text}
+                onChange={setText}
+                cleanOnEnter
+                placeholder="メッセージを入力"
+                ref={inputRef}
+                borderColor="#bbb"
+                borderRadius="14px"
+              />
+            </ContentStyled>
+          ) : (
+            <>
+              <Alert
+                type="info"
+                message="注意"
+                description={userAnnounces?.invitedUser + "さんからグループ招待があります。"}
+                showIcon
+              />
+              <Button className="ant-btn-success" onClick={handleAccept}>
+                参加
+              </Button>
+              <Button className="ant-btn-danger" onClick={handleDeny}>
+                拒否
+              </Button>
+            </>
+          )}
         </WrapperStyled>
       ) : (
         <Alert

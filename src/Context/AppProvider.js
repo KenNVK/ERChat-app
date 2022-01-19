@@ -61,6 +61,8 @@ export default function AppProvider({ children }) {
       compareValue: selectedRoom.members,
     };
   }, [selectedRoom.members]);
+
+  const userAnnounces = messages.filter(m => m.membersUid?.includes(currentUser.uid))[0];
   const selectedRoomMembers = useFirestore("users", usersCondition);
   const changeNameCurrentUser = name => {
     const userRef = doc(db, "users", currentUser.id);
@@ -72,6 +74,10 @@ export default function AppProvider({ children }) {
   };
   const leaveRoomChat = () => {
     const memRef = doc(db, "rooms", selectedRoomId);
+    if (userAnnounces !== undefined) {
+      const announceRef = doc(db, "messages", userAnnounces.id);
+      updateDoc(announceRef, { membersUid: userAnnounces?.membersUid?.filter(m => m !== currentUser.uid) });
+    }
     updateDoc(memRef, { members: selectedRoom?.members.filter(x => x !== currentUser?.uid) });
     if (selectedRoom.members.length === 1) {
       deleteDoc(memRef);
@@ -83,6 +89,15 @@ export default function AppProvider({ children }) {
       });
     }
     setSelectedRoomId("");
+  };
+  const stayRoomChat = () => {
+    const announceRef = doc(db, "messages", userAnnounces.id);
+    updateDoc(announceRef, { membersUid: userAnnounces?.membersUid?.filter(m => m !== currentUser.uid) });
+    addDocument("messages", {
+      ...{ mess: currentUser?.displayName + "さんがグループに参加しました。" },
+      isAnnounce: true,
+      roomId: selectedRoomId,
+    });
   };
   return (
     <AppContext.Provider
@@ -103,6 +118,8 @@ export default function AppProvider({ children }) {
         setStatusUser,
         changeNameCurrentUser,
         leaveRoomChat,
+        stayRoomChat,
+        userAnnounces,
       }}
     >
       {children}
