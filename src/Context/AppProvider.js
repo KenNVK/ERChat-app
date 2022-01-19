@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { AuthContext } from "./AuthProvider";
 import useFirestore from "../hooks/useFirestore";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
-import { generateKeywords } from "../firebase/service";
+import { generateKeywords, addDocument } from "../firebase/service";
 
 export const AppContext = React.createContext();
 export default function AppProvider({ children }) {
@@ -12,10 +12,7 @@ export default function AppProvider({ children }) {
   const [isInviteMemberVisible, setIsInviteMemberVisible] = useState(false);
   const {
     user: { uid, isOnline },
-    isSettedStatus,
-    setIsSettedStatus,
   } = React.useContext(AuthContext);
-
   const currentUserCondition = React.useMemo(() => {
     return {
       fieldName: "uid",
@@ -28,20 +25,12 @@ export default function AppProvider({ children }) {
     photoURL: "",
     uid: "",
   };
-  const setStatusUser = status => {
-    const userRef = doc(db, "users", currentUser?.id);
-    updateDoc(userRef, { isOnline: status });
-  };
-  while (!isSettedStatus) {
-    if (currentUser?.uid === uid && isOnline) {
-      setStatusUser(true);
-      setIsSettedStatus(true);
-      break;
-    } else {
-      break;
+  const setStatusUser = React.useEffect(() => {
+    if (currentUser?.uid === uid) {
+      const userRef = doc(db, "users", currentUser?.id);
+      updateDoc(userRef, { isOnline: isOnline });
     }
-  }
-
+  }, [isOnline, currentUser?.id, currentUser?.uid, uid]);
   const roomsCondition = React.useMemo(() => {
     return {
       fieldName: "members",
@@ -50,6 +39,7 @@ export default function AppProvider({ children }) {
     };
   }, [uid]);
   const rooms = useFirestore("rooms", roomsCondition);
+
   const [selectedRoomId, setSelectedRoomId] = useState("");
   const selectedRoom = React.useMemo(
     () => rooms.find(room => room.id === selectedRoomId) || {},
@@ -83,6 +73,15 @@ export default function AppProvider({ children }) {
   const leaveRoomChat = () => {
     const memRef = doc(db, "rooms", selectedRoomId);
     updateDoc(memRef, { members: selectedRoom?.members.filter(x => x !== currentUser?.uid) });
+    if (selectedRoom.members.length === 1) {
+      deleteDoc(memRef);
+    } else {
+      addDocument("messages", {
+        ...{ mess: currentUser?.displayName + "さんがグループを退会しました。" },
+        isAnnounce: true,
+        roomId: selectedRoomId,
+      });
+    }
     setSelectedRoomId("");
   };
   return (

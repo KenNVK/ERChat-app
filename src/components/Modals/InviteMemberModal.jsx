@@ -4,6 +4,7 @@ import { AppContext } from "../../Context/AppProvider";
 // import { AuthContext } from "../../Context/AuthProvider";
 import { debounce } from "lodash";
 import { db } from "../../firebase/config";
+import { addDocument } from "../../firebase/service";
 import { query, collection, where, orderBy, limit, getDocs, doc, updateDoc, arrayUnion } from "firebase/firestore";
 
 function DebounceSelect({ fetchOptions, debounceTimeout = 300, curMembers, ...props }) {
@@ -73,12 +74,17 @@ async function fetchUserList(search, curMembers) {
 
 export default function InviteMemberModal() {
   const [value, setValue] = useState([]);
-  const { isInviteMemberVisible, setIsInviteMemberVisible, selectedRoom, selectedRoomId } =
+  const { isInviteMemberVisible, setIsInviteMemberVisible, selectedRoom, selectedRoomId, currentUser } =
     React.useContext(AppContext);
   const [form] = Form.useForm();
   const handleOk = () => {
     const roomRef = doc(db, "rooms", selectedRoomId);
-    updateDoc(roomRef, { members: arrayUnion(...selectedRoom?.members, ...value.map(val => val.key)) });
+    updateDoc(roomRef, { members: arrayUnion(...value.map(val => val.key)) });
+    addDocument("messages", {
+      mess: currentUser?.displayName + "が" + value.map(val => val.label[1] + " ") + "をグループに紹介しました。",
+      isAnnounce: true,
+      roomId: selectedRoomId,
+    });
     setValue([]);
     form.resetFields();
     setIsInviteMemberVisible(false);

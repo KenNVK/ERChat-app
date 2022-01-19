@@ -3,7 +3,7 @@ import { Input, Modal, Form } from "antd";
 import { AppContext } from "../../Context/AppProvider";
 export default function ModifyUserModal() {
   const [form] = Form.useForm();
-  const inpRef = React.createRef();
+  const inpRef = React.useRef(null);
   const { isModifyUserVisible, setIsModifyUserVisible, currentUser, changeNameCurrentUser } =
     React.useContext(AppContext);
   const onOk = () => {
@@ -11,9 +11,10 @@ export default function ModifyUserModal() {
   };
   React.useEffect(() => {
     if (isModifyUserVisible) {
-      inpRef?.current?.focus();
+      console.log(inpRef.current);
+      inpRef?.current?.input?.focus();
     }
-  }, [isModifyUserVisible, inpRef]);
+  }, [isModifyUserVisible]);
   return (
     <Modal visible={isModifyUserVisible} onCancel={() => setIsModifyUserVisible(false)} onOk={onOk}>
       <Form form={form} layout="vertical">

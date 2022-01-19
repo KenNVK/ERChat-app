@@ -72,9 +72,10 @@ export default function ChatWindow() {
   const handleOnSubmit = value => {
     if (value) {
       addDocument("messages", {
-        ...{ mess: value },
+        mess: value,
         uid: currentUser?.uid,
         roomId: selectedRoomId,
+        isAnnounce: false,
       });
       // focus to input again after submit
       inputRef?.current.focus();
@@ -102,56 +103,63 @@ export default function ChatWindow() {
     </Menu>
   );
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     // scroll to bottom affter message changed
     if (messagesRef?.current) messagesRef?.current.scrollIntoView({ behavior: "smooth" });
+    return () => {
+      messagesRef.current = null;
+    };
   }, [messages]);
 
-  if (selectedRoomId !== "") {
-    return (
-      <WrapperStyled>
-        <HeaderStyled>
-          <div className="header__info">
-            <p className="title">{selectedRoom.name}</p>
-            <span className="header__description">{selectedRoom.description}</span>
-          </div>
-          <ButtonGroupStyled>
-            <Avatar.Group size="small" maxCount={2}>
-              {selectedRoomMembers.map(member => (
-                <Tooltip key={member?.id} placement="bottomLeft" title={member?.displayName}>
-                  <Badge status="success" offset={[-5, 20]} dot={member?.isOnline ? true : false} showZero>
-                    <Avatar src={member?.photoURL}>{member.displayName?.charAt(0)}</Avatar>
-                  </Badge>
-                </Tooltip>
+  return (
+    <>
+      {selectedRoomId !== "" ? (
+        <WrapperStyled>
+          <HeaderStyled>
+            <div className="header__info">
+              <p className="title">{selectedRoom.name}</p>
+              <span className="header__description">{selectedRoom.description}</span>
+            </div>
+            <ButtonGroupStyled>
+              <Avatar.Group size="small" maxCount={2}>
+                {selectedRoomMembers.map(member => (
+                  <Tooltip key={member?.id} placement="bottomLeft" title={member?.displayName}>
+                    <Badge status="success" offset={[-5, 20]} dot={member?.isOnline ? true : false} showZero>
+                      <Avatar src={member?.photoURL}>{member.displayName?.charAt(0)}</Avatar>
+                    </Badge>
+                  </Tooltip>
+                ))}
+              </Avatar.Group>
+              <Dropdown.Button overlay={menu} />
+            </ButtonGroupStyled>
+          </HeaderStyled>
+          <ContentStyled>
+            <MessageListStyled>
+              {messages.map(mess => (
+                <Message
+                  key={mess.id}
+                  created={mess.created}
+                  text={mess.mess}
+                  uid={mess.uid}
+                  isAnnounce={mess.isAnnounce}
+                ></Message>
               ))}
-            </Avatar.Group>
-            <Dropdown.Button overlay={menu} />
-          </ButtonGroupStyled>
-        </HeaderStyled>
-        <ContentStyled>
-          <MessageListStyled>
-            {messages.map(mess => (
-              <Message key={mess.id} created={mess.created} text={mess.mess} uid={mess.uid}></Message>
-            ))}
-            <div style={{ float: "left", clear: "both" }} ref={messagesRef}></div>
-          </MessageListStyled>
+              <div style={{ float: "left", clear: "both" }} ref={messagesRef}></div>
+            </MessageListStyled>
 
-          <InputEmoji
-            onEnter={handleOnSubmit}
-            value={text}
-            onChange={setText}
-            cleanOnEnter
-            placeholder="メッセージを入力"
-            ref={inputRef}
-            borderColor="#bbb"
-            borderRadius="14px"
-          />
-        </ContentStyled>
-      </WrapperStyled>
-    );
-  } else {
-    return (
-      <>
+            <InputEmoji
+              onEnter={handleOnSubmit}
+              value={text}
+              onChange={setText}
+              cleanOnEnter
+              placeholder="メッセージを入力"
+              ref={inputRef}
+              borderColor="#bbb"
+              borderRadius="14px"
+            />
+          </ContentStyled>
+        </WrapperStyled>
+      ) : (
         <Alert
           type="info"
           message="注意"
@@ -159,7 +167,7 @@ export default function ChatWindow() {
           showIcon
           closable
         />
-      </>
-    );
-  }
+      )}
+    </>
+  );
 }

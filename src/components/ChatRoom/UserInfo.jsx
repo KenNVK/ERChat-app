@@ -34,14 +34,13 @@ const rootSubmenuKeys = ["sub1"];
 
 export default function UserInfo() {
   const [openKeys, setOpenKeys] = React.useState([]);
-  const { user } = React.useContext(AuthContext);
-  const { setIsModifyUserVisible, currentUser, setStatusUser } = React.useContext(AppContext);
+  const { setUser, user } = React.useContext(AuthContext);
+  const { setIsModifyUserVisible, currentUser } = React.useContext(AppContext);
   const history = useHistory();
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await setUser({ ...user, isOnline: false });
     auth.signOut();
     history.push("/login");
-    user.isOnline = false;
-    setStatusUser(false);
   };
   const { displayName, photoURL } = currentUser;
 

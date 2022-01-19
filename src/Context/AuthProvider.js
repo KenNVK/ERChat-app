@@ -8,7 +8,6 @@ export const AuthContext = React.createContext();
 
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState({});
-  const [isSettedStatus, setIsSettedStatus] = useState(true);
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
   React.useEffect(() => {
@@ -18,22 +17,21 @@ export default function AuthProvider({ children }) {
         setUser({ displayName, email, uid, photoURL, isOnline: true });
         setIsLoading(false);
         history.push("/");
-        setIsSettedStatus(false);
-        return;
+      } else {
+        setIsLoading(false);
+        history.push("/login");
       }
-      setIsSettedStatus(true);
-      setIsLoading(false);
-      history.push("/login");
     });
 
     // clean function
     return () => {
+      setUser({});
       unsubscribed();
     };
   }, [history]);
 
   return (
-    <AuthContext.Provider value={{ user, isSettedStatus, setIsSettedStatus }}>
+    <AuthContext.Provider value={{ user, setUser }}>
       {isLoading ? (
         <Spin
           size="large"

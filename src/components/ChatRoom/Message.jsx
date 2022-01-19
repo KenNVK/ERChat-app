@@ -30,7 +30,10 @@ const WrapperStyled = styled.div`
     margin-right: 10px;
     float: right;
   }
-
+  .announce {
+    text-align: center;
+    color: gray;
+  }
   .diff-owner-content {
     float: none;
     margin-left: 38px;
@@ -45,7 +48,7 @@ function formatDate(seconds) {
   }
   return formattedDate;
 }
-export default function Message({ text, created, uid }) {
+export default function Message({ text, created, uid, isAnnounce }) {
   const { currentUser, selectedRoomMembers } = React.useContext(AppContext);
   const author = selectedRoomMembers.filter(x => x.uid === uid)[0];
   return (
@@ -56,13 +59,17 @@ export default function Message({ text, created, uid }) {
             <Typography.Text className="content">{text}</Typography.Text>
           </Tooltip>
         </div>
+      ) : isAnnounce ? (
+        <>
+          <div className="announce">{text}</div>
+        </>
       ) : (
         <>
           <div>
             <Badge status="success" offset={[0, 5]} dot={author?.isOnline ? true : false} showZero>
               <Avatar src={author?.photoURL}>{author?.displayName?.charAt(0)}</Avatar>
             </Badge>
-            <Typography.Text className="author">{author?.displayName}</Typography.Text>
+            <Typography.Text className="author">{author?.displayName && "無名のユーザー"}</Typography.Text>
             <Typography.Text className="date">{formatDate(created?.seconds)}</Typography.Text>
           </div>
           <div>
