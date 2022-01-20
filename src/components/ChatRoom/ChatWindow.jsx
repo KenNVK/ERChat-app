@@ -13,11 +13,11 @@ const HeaderStyled = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 56px;
-  padding: 0 16px;
-  border-bottom: 1px solid rgb(230, 230, 230);
+  padding: 36px 30px;
+  border-bottom: 2px solid rgb(230, 230, 230);
 
   .header {
-    &__infor {
+    &__info {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -29,7 +29,7 @@ const HeaderStyled = styled.div`
     }
 
     &__description {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
 `;
@@ -43,7 +43,7 @@ const ButtonGroupStyled = styled.div`
   align-items: center;
 `;
 const ContentStyled = styled.div`
-  height: calc(100% - 56px);
+  height: calc(100% - (var(--title-bar-height) + var(--chat-window-header-height)));
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
@@ -114,7 +114,8 @@ export default function ChatWindow() {
 
   React.useEffect(() => {
     // scroll to bottom affter message changed
-    if (messagesRef?.current) messagesRef?.current.scrollIntoView({ behavior: "smooth" });
+    if (messagesRef?.current)
+      messagesRef?.current.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
   }, [messages]);
 
   return (
@@ -123,8 +124,8 @@ export default function ChatWindow() {
         <WrapperStyled>
           <HeaderStyled>
             <div className="header__info">
-              <p className="title">{selectedRoom.name}</p>
-              <span className="header__description">{selectedRoom.description}</span>
+              <h1 className="title">{selectedRoom.name}</h1>
+              <h3 className="header__description">{selectedRoom.description}</h3>
             </div>
             <ButtonGroupStyled>
               <Avatar.Group size="small" maxCount={2}>
@@ -166,20 +167,20 @@ export default function ChatWindow() {
               />
             </ContentStyled>
           ) : (
-            <>
+            <div>
               <Alert
                 type="info"
                 message="注意"
                 description={userAnnounces?.invitedUser + "さんからグループ招待があります。"}
                 showIcon
               />
-              <Button className="ant-btn-success" onClick={handleAccept}>
+              <Button style={{ margin: "10px" }} className="ant-btn-primary" onClick={handleAccept}>
                 参加
               </Button>
               <Button className="ant-btn-danger" onClick={handleDeny}>
                 拒否
               </Button>
-            </>
+            </div>
           )}
         </WrapperStyled>
       ) : (

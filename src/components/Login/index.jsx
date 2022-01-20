@@ -87,7 +87,7 @@ export default function Login() {
   const { setSelectedRoomId } = React.useContext(AppContext);
   const handleLogin = async provider => {
     try {
-      const data = await signInWithPopup(auth, provider);
+      const data = await signInWithPopup(auth, provider.setCustomParameters({ prompt: "select_account" }));
       setSelectedRoomId("");
       if (data._tokenResponse?.isNewUser) {
         addDocument("users", {

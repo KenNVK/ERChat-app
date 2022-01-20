@@ -2,7 +2,7 @@ import React from "react";
 import { AppContext } from "../../Context/AppProvider";
 import { Collapse, Typography, Button } from "antd";
 import styled from "styled-components";
-import { PlusSquareOutlined } from "@ant-design/icons";
+import { PlusSquareOutlined, NumberOutlined } from "@ant-design/icons";
 
 const { Panel } = Collapse;
 const PanelStyled = styled(Panel)`
@@ -27,6 +27,11 @@ const LinkStyled = styled(Typography.Link)`
   display: block;
   margin-bottom: 5px;
   color: #fff;
+
+  .RoomIcon {
+    color: #fff;
+    margin-right: 5px;
+  }
 `;
 
 export default function RoomList() {
@@ -39,6 +44,7 @@ export default function RoomList() {
       <PanelStyled header="ルームリスト" key={rooms.length === 0 ? "" : "1"}>
         {rooms.map(room => (
           <LinkStyled key={room.id} onClick={() => setSelectedRoomId(room.id)}>
+            <NumberOutlined className="RoomIcon" />
             {room.name}
           </LinkStyled>
         ))}

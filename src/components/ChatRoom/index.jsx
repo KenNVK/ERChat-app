@@ -59,7 +59,7 @@ const Container = styled.div`
 export default function ChatRoom() {
   return (
     <Container>
-      <SplitPane split="vertical" maxSize={550} minSize={200}>
+      <SplitPane split="vertical" maxSize={550} minSize={210}>
         <div>
           <Sidebar />
         </div>
