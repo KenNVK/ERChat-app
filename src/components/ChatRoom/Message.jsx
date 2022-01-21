@@ -38,6 +38,7 @@ const WrapperStyled = styled.div`
     float: none;
     margin-left: 38px;
     background: #a9a9a9;
+    color: #000;
   }
 `;
 function formatDate(seconds) {

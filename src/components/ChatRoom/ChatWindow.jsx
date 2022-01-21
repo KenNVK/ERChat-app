@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { UserAddOutlined } from "@ant-design/icons";
+import { UserAddOutlined, DashOutlined } from "@ant-design/icons";
 import { Tooltip, Avatar, Alert, Menu, Dropdown, Badge, Button } from "antd";
 import { ExportOutlined } from "@ant-design/icons";
 import { AppContext } from "../../Context/AppProvider";
@@ -12,7 +12,7 @@ const HeaderStyled = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 56px;
+  height: var(--chat-window-header-height);
   padding: 36px 30px;
   border-bottom: 2px solid rgb(230, 230, 230);
 
@@ -29,7 +29,8 @@ const HeaderStyled = styled.div`
     }
 
     &__description {
-      font-size: 14px;
+      font-size: 16px;
+      line-height: 1.2;
     }
   }
 `;
@@ -45,14 +46,34 @@ const ButtonGroupStyled = styled.div`
 const ContentStyled = styled.div`
   height: calc(100% - (var(--title-bar-height) + var(--chat-window-header-height)));
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   flex-direction: column;
-  padding: 11px;
+  padding: 0 12px;
+  margin-top: 10px;
 `;
 
 const MessageListStyled = styled.div`
   max-height: 100%;
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    background-color: #eee;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(55, 55, 58, 0.8);
+    border-radius: 20px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(55, 55, 58, 1);
+    cursor: pointer;
+  }
 `;
 
 export default function ChatWindow() {
@@ -103,7 +124,7 @@ export default function ChatWindow() {
     <Menu onClick={handleMenuClick}>
       <Menu.Item key="1">
         <UserAddOutlined />
-        <span>メンバーを追加する</span>
+        <span>メンバーを追加</span>
       </Menu.Item>
       <Menu.Item key="2" danger>
         <ExportOutlined />
@@ -124,7 +145,7 @@ export default function ChatWindow() {
         <WrapperStyled>
           <HeaderStyled>
             <div className="header__info">
-              <h1 className="title">{selectedRoom.name}</h1>
+              <h1 className="header__title">{selectedRoom.name}</h1>
               <h3 className="header__description">{selectedRoom.description}</h3>
             </div>
             <ButtonGroupStyled>
@@ -137,7 +158,9 @@ export default function ChatWindow() {
                   </Tooltip>
                 ))}
               </Avatar.Group>
-              <Dropdown.Button overlay={menu} />
+              <Dropdown overlay={menu}>
+                <Button style={{ marginLeft: "6px" }} icon={<DashOutlined />} />
+              </Dropdown>
             </ButtonGroupStyled>
           </HeaderStyled>
 
