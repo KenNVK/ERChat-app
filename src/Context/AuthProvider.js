@@ -10,6 +10,7 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState({});
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(true);
+  console.log(auth);
   React.useEffect(() => {
     const unsubscribed = onAuthStateChanged(auth, user => {
       if (user) {

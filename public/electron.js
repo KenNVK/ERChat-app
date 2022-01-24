@@ -1,12 +1,10 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu, dialog } = require("electron");
-const path = require("path");
-const isDev = require("electron-is-dev");
 const nativeImage = require("electron").nativeImage;
-const appVersion = require("./package.json").version;
+const appVersion = require("../package.json").version;
+const reactVersion = require("../package.json").dependencies.react;
 const electronVersion = app.getVersion();
-const reactVersion = require("./package.json").dependencies.react;
-const icon = nativeImage.createFromPath(app.getAppPath() + "/src/images/icon.png");
+const icon = nativeImage.createFromPath(app.getAppPath() + "/build/icons/icon.png");
 
 let template = [
   { label: "もとに戻す", role: "undo" },
@@ -46,17 +44,21 @@ function createWindow() {
     minWidth: 630,
     webPreferences: {
       nodeIntegration: false,
+      devTools: false,
     },
     icon: icon,
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(isDev ? "http://localhost:3000" : `file://${path.join(__dirname, "../build/index.html")}`);
+  mainWindow.loadURL("https://erchat-app-8d529.firebaseapp.com");
 
   // create context menu
   mainWindow.webContents.on("context-menu", () => {
     contextMenu.popup();
   });
+
+  //disable menu bar
+  mainWindow.setMenu(null);
 }
 
 app.whenReady().then(() => {
